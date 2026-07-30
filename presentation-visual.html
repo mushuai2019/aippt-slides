@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIPPT误区：全部走错了方向 — 视觉版</title>
+<style>
+  /* === Reset & Base === */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+
+  /* === Brand Colors === */
+  :root {
+    --bg-primary: #0f0f0f;
+    --bg-card: #1a1a1a;
+    --bg-section: #141414;
+    --text-primary: #f0ece4;
+    --text-secondary: #a09888;
+    --text-muted: #6b6358;
+    --accent: #c9a84c;
+    --accent-dim: #8a7230;
+    --accent-glow: rgba(201,168,76,0.08);
+    --border-subtle: rgba(201,168,76,0.15);
+    --font-display: "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+    --font-body: "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    line-height: 1.7;
+  }
+
+  /* === Slide Container === */
+  .slides { position: relative; width: 100%; height: 100vh; background: var(--bg-primary); }
+  .slide {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6% 10%;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    overflow-y: auto;
+    background: var(--bg-primary);
+  }
+  .slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+
+  /* === Background Pattern === */
+  .slide::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.02) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* === Typography === */
+  h1 {
+    font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.4em;
+    letter-spacing: 0.03em;
+    color: var(--text-primary);
+  }
+  h2 {
+    font-size: clamp(1.4rem, 3.2vw, 2.8rem);
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 0.5em;
+    color: var(--text-primary);
+  }
+  h3 {
+    font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.5em;
+    color: var(--text-secondary);
+  }
+  p  { font-size: clamp(0.95rem, 1.8vw, 1.4rem); margin-bottom: 0.6em; color: var(--text-secondary); }
+  ul { list-style: none; padding: 0; }
+  li {
+    font-size: clamp(0.95rem, 1.8vw, 1.4rem);
+    padding: 0.45em 0 0.45em 1.6em;
+    position: relative;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.8em;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+  li strong { color: var(--text-primary); }
+
+  .key-message {
+    font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--accent);
+    margin: 0.6em 0;
+    padding: 0.6em 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .subtitle {
+    font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1em;
+  }
+  .note {
+    font-size: clamp(0.75rem, 1.3vw, 1rem);
+    color: var(--text-muted);
+    margin-top: 1.5em;
+    font-style: italic;
+  }
+  .step-label {
+    font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+    opacity: 0.7;
+  }
+
+  /* === Cover === */
+  .slide-cover { text-align: center; background: var(--bg-primary); }
+  .slide-cover h1 {
+    font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+    margin-bottom: 0.2em;
+    background: linear-gradient(135deg, #f0ece4 0%, #c9a84c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .slide-cover .subtitle { color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.6rem); }
+  .slide-cover .accent-line {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin: 1.2em auto;
+  }
+  .slide-cover .brand-tag {
+    display: inline-block;
+    border: 1px solid var(--border-subtle);
+    padding: 0.4em 1.2em;
+    font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-top: 1.5em;
+  }
+
+  /* === Section transition === */
+  .slide-section { text-align: center; background: var(--bg-section); }
+  .slide-section h2 { font-size: clamp(1.8rem, 4vw, 3.5rem); margin-bottom: 0.3em; }
+  .slide-section .section-number {
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0.15;
+    margin-bottom: 0.1em;
+    line-height: 1;
+    font-family: Georgia, serif;
+  }
+  .slide-section .section-sub {
+    color: var(--text-muted);
+    margin-top: 1em;
+    font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+  }
+  .slide-section .accent-line-center {
+    width: 40px; height: 2px;
+    background: var(--accent);
+    margin: 1em auto;
+    opacity: 0.5;
+  }
+
+  /* === Content cards === */
+  .content-grid {
+    display: flex; flex-wrap: wrap; gap: 1.5em; margin-top: 0.8em;
+  }
+  .content-grid .col {
+    flex: 1; min-width: 200px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 1.5em;
+  }
+  .content-grid .col-label {
+    font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8em;
+    text-transform: uppercase;
+  }
+  .content-grid .col p { font-size: clamp(0.85rem, 1.5vw, 1.1rem); }
+  .content-grid .col ul li { font-size: clamp(0.8rem, 1.4vw, 1rem); }
+  .content-grid.dark-left .col:first-child { background: rgba(255,255,255,0.02); }
+  .content-grid.dark-left .col:first-child li { color: var(--text-muted); }
+
+  /* === Call to action === */
+  .call-to-action {
+    font-size: clamp(1rem, 2.2vw, 1.8rem);
+    font-weight: 700;
+    color: var(--bg-primary);
+    background: var(--accent);
+    padding: 0.7em 1.4em;
+    display: inline-block;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+    margin-top: 0.8em;
+  }
+
+  /* === Closing === */
+  .slide-closing { text-align: center; background: var(--bg-primary); }
+  .slide-closing .key-message {
+    border: none;
+    font-size: clamp(1.4rem, 3.2vw, 2.5rem);
+    color: var(--text-primary);
+    padding: 0.3em 0;
+  }
+
+  /* === Decorative corner accent === */
+  .corner-accent {
+    position: absolute;
+    bottom: 2em; right: 2em;
+    width: 60px; height: 60px;
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* === Navigation === */
+  .nav-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.7em 2em; z-index: 10;
+    background: linear-gradient(transparent, rgba(15,15,15,0.95) 35%);
+    pointer-events: none;
+  }
+  .nav-bar > * { pointer-events: auto; }
+  .page-info { font-size: 0.8rem; color: var(--text-muted); font-family: Georgia, serif; }
+  .nav-arrows { display: flex; gap: 0.6em; }
+  .nav-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-subtle);
+    border-radius: 50%; width: 34px; height: 34px;
+    font-size: 1rem; cursor: pointer; color: var(--text-secondary);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    font-family: Georgia, serif;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .nav-btn:disabled { opacity: 0.2; cursor: default; }
+
+  /* === Progress === */
+  .progress-track {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 2px;
+    background: rgba(255,255,255,0.05); z-index: 11;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+    transition: width 0.3s ease;
+  }
+
+  /* === Click zones === */
+  .click-zone {
+    position: fixed; top: 0; bottom: 2px; width: 40%; z-index: 5;
+    cursor: pointer;
+  }
+  .click-left { left: 0; }
+  .click-right { right: 0; }
+
+  /* === Print === */
+  @media print {
+    @page { size: A4 landscape; margin: 1.2cm; }
+    html, body { overflow: visible; background: white; }
+    .slides { height: auto; }
+    .slide {
+      position: relative; opacity: 1 !important; pointer-events: none;
+      break-after: page; height: 100vh; page-break-after: always;
+      padding: 5% 7%;
+      background: white !important;
+      color: #1a1a1a !important;
+    }
+    .slide::before { display: none; }
+    .nav-bar, .click-zone, .progress-track, .corner-accent { display: none !important; }
+    .slide:last-child { break-after: auto; }
+    .key-message { color: #1a1a1a !important; border-color: #ccc !important; }
+    li { color: #333 !important; }
+    .slide-cover h1 { -webkit-text-fill-color: #1a1a1a !important; color: #1a1a1a !important; background: none !important; }
+    .call-to-action { background: #1a1a1a !important; color: white !important; }
+    .content-grid .col { background: #f8f8f8 !important; border-color: #ddd !important; }
+    .slide-section { background: #f5f5f5 !important; }
+    .brand-tag { border-color: #ccc !important; color: #999 !important; }
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 5% 7%; }
+    .key-message { font-size: clamp(1.1rem, 3.5vw, 1.6rem); }
+    li { font-size: clamp(0.85rem, 2.8vw, 1.1rem); }
+    .nav-bar { padding: 0.4em 1em; }
+    .content-grid { gap: 0.8em; }
+    .content-grid .col { padding: 1em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slides" id="slides">
+
+  <!-- ====== 1. Cover ====== -->
+  <div class="slide slide-cover active" data-index="0">
+    <h1>AIPPT误区：<br>全部走错了方向</h1>
+    <div class="accent-line"></div>
+    <p class="subtitle">为什么99%的AIPPT产品，都在解决一个不存在的问题</p>
+    <div class="brand-tag">川哥 · 26年品牌广告老兵</div>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 2. 全部走错了方向 ====== -->
+  <div class="slide" data-index="1">
+    <h2>全部走错了方向</h2>
+    <div class="key-message">这句话不是标题党<br>是26年行业观察的判决</div>
+    <ul>
+      <li>从PPT诞生到今天，核心诉求从未变过：<strong>快速传递观点</strong></li>
+      <li>但AIPPT赛道集体跑偏，追逐<strong>"可编辑PPTX"</strong>的幻象</li>
+      <li>方向错了，跑得越快，离目标越远</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 3. 你做的不是PPT，是PPTX ====== -->
+  <div class="slide" data-index="2">
+    <h2>你做的不是PPT，是PPTX</h2>
+    <div class="key-message">PPT是呈现方式<br>PPTX是文件格式——两者差了100年</div>
+    <ul>
+      <li>PPT = <strong>Power Point</strong> = 强有力地点，不是文件格式</li>
+      <li>PPTX = 一个Zip压缩包，一堆XML，一堆兼容性问题</li>
+      <li>把PPT等同于PPTX，就像把<strong>思想等同于纸张</strong></li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 4. Section: 问题诊断 ====== -->
+  <div class="slide slide-section" data-index="3">
+    <div class="section-number">Ⅰ</div>
+    <h2>问题诊断：AIPPT的三宗罪</h2>
+    <div class="accent-line-center"></div>
+    <p class="section-sub">先看病症，再找病根，最后开药方</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 5. 误区一 ====== -->
+  <div class="slide" data-index="4">
+    <h2>误区一：追求"可编辑性"</h2>
+    <div class="key-message">用户改PPT不是因为想改<br>是因为不得不改</div>
+    <ul>
+      <li>所有AIPPT产品都把<strong>"可编辑"</strong>当做核心卖点</li>
+      <li>但用户要的是"<strong>一次成型，不用再改</strong>"</li>
+      <li>可编辑 = 可浪费时间</li>
+      <li>真正的好幻灯片不需要你动手改，直接就能用</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 6. 误区二 ====== -->
+  <div class="slide" data-index="5">
+    <h2>误区二：模板化思维</h2>
+    <div class="key-message">模板解决的是"好看"的问题<br>不是"有用"的问题</div>
+    <ul>
+      <li>AIPPT产品大量堆砌模板库，以为用户选模板就完事了</li>
+      <li>但用户真正的痛苦是：<strong>"我不知道怎么组织内容"</strong></li>
+      <li style="opacity:0.5;">给你1000个模板，也救不了没有观点的PPT</li>
+      <li style="margin-top:0.6em; color: var(--accent); font-weight: 600;">内容大于形式，观点大于设计</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 7. 误区三 ====== -->
+  <div class="slide" data-index="6">
+    <h2>误区三：功能越堆越多</h2>
+    <div class="key-message">每个新功能都是认知负担<br>不是价值增量</div>
+    <ul>
+      <li>AI生图、AI排版、AI动画、AI配乐...功能列表越来越长</li>
+      <li>用户打开工具，面对几十个按钮，<strong>直接懵了</strong></li>
+      <li>功能的增加掩盖了核心问题：<strong>内容本身没人管</strong></li>
+      <li style="margin-top:0.6em; color: var(--accent); font-weight: 600;">少即是多，聚焦才能穿透</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 8. Section: 本质追问 ====== -->
+  <div class="slide slide-section" data-index="7">
+    <div class="section-number">Ⅱ</div>
+    <h2>本质追问：PPT到底为什么存在？</h2>
+    <div class="accent-line-center"></div>
+    <p class="section-sub">回到原点，重新思考这个看似简单的问题</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 9. 26年答案 ====== -->
+  <div class="slide" data-index="8">
+    <h2>26年，我得到的答案是两个字</h2>
+    <div class="key-message" style="text-align:center; font-size:clamp(2rem,5vw,4rem); border: none; color: var(--accent);">说服</div>
+    <ul style="max-width:600px; margin:0 auto;">
+      <li>1999年入行到现在，经手过<strong>上万页PPT</strong></li>
+      <li>从胶片时代到Keynote再到在线协作，形式变了，<strong>本质没变</strong></li>
+      <li style="margin-top:0.6em; color: var(--accent); font-weight: 600;">降低对方的理解成本，提高认同概率</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 10. 快速表达 ====== -->
+  <div class="slide" data-index="9">
+    <h2>用户要的不是文件<br>是"快速表达"</h2>
+    <div class="key-message">观点 × 速度 = 影响力</div>
+    <ul>
+      <li>听众不需要知道你的PPT是什么格式</li>
+      <li>他们只关心：你能不能在<strong>10分钟内让我听懂</strong>？</li>
+      <li>任何增加"到达速度"的环节都应该保留</li>
+      <li>任何降低"到达速度"的环节都应该砍掉</li>
+    </ul>
+    <p class="note">现在AIPPT在PPTX里精雕细琢，恰恰减慢了表达速度</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 11. Section: 正确答案 ====== -->
+  <div class="slide slide-section" data-index="10">
+    <div class="section-number">Ⅲ</div>
+    <h2>正确答案：网页幻灯片</h2>
+    <div class="accent-line-center"></div>
+    <p class="section-sub">Web Slide，不是PPTX，更不是PDF</p>
+    <p style="font-size:clamp(1.2rem,2.8vw,2.2rem); font-weight:600; margin-top:1.2em; color: var(--accent);">网页就是最好的幻灯片载体，没有之一</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 12. 四个字 ====== -->
+  <div class="slide" data-index="11">
+    <h2>为什么是网页？四个字</h2>
+    <div class="key-message" style="text-align:center; font-size:clamp(2rem,4.5vw,3.5rem); letter-spacing:0.3em;">快 · 轻 · 准 · 活</div>
+    <ul>
+      <li><strong>快</strong> — 输入即生成，生成即预览，无需等待</li>
+      <li><strong>轻</strong> — 一个链接走天下，不安装、不下载、不兼容</li>
+      <li><strong>准</strong> — 白底黑字，内容为王，没有视觉干扰</li>
+      <li><strong>活</strong> — 随时修改，即时生效，版本永远最新</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 13. PPTX vs Web Slide ====== -->
+  <div class="slide" data-index="12">
+    <h2>PPTX vs Web Slide<br>降维打击</h2>
+    <div class="key-message">前者是"文件思维"<br>后者是"内容思维"</div>
+    <div class="content-grid">
+      <div class="col">
+        <div class="col-label">PPTX 流程</div>
+        <ul>
+          <li>选模板 → 填内容</li>
+          <li>调格式 → 导出</li>
+          <li>发微信 → 对方打不开</li>
+          <li>再转PDF → <strong style="color:var(--text-muted);">1小时</strong></li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="col-label" style="color:var(--accent);">Web Slide 流程</div>
+        <ul>
+          <li>输入观点 → AI生成</li>
+          <li>分享链接</li>
+          <li>任何设备完美打开</li>
+          <li style="color:var(--accent); font-weight:700;">→ 3分钟</li>
+        </ul>
+      </div>
+    </div>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 14. Section: 方法论 ====== -->
+  <div class="slide slide-section" data-index="13">
+    <div class="section-number">Ⅳ</div>
+    <h2>川哥方法论：三步走</h2>
+    <div class="accent-line-center"></div>
+    <p class="section-sub">从想法到网页幻灯片，结构化流程</p>
+    <p style="color:var(--text-muted); margin-top:1.5em; font-size:clamp(0.85rem,1.4vw,1.1rem);">这不是理论，是26年实操验证的方法</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 15. Step 1 ====== -->
+  <div class="slide" data-index="14">
+    <p class="step-label">STEP 01</p>
+    <h2>多智能体调研</h2>
+    <div class="key-message">用AI的群体智慧<br>替代个人的认知盲区</div>
+    <ul>
+      <li>同时调度多个AI智能体，从不同角度调研同一个话题</li>
+      <li><strong>横向对比</strong>：同一论点的不同立场</li>
+      <li><strong>交叉验证</strong>：事实性信息的真伪确认</li>
+      <li>输出结果：结构化、有来源的调研报告</li>
+    </ul>
+    <p class="note">你一个人想不到的视角，AI替你补全</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 16. Step 2 ====== -->
+  <div class="slide" data-index="15">
+    <p class="step-label">STEP 02</p>
+    <h2>内容架构</h2>
+    <div class="key-message">有骨架的内容才能站得住<br>没有骨架只是数据的堆砌</div>
+    <ul>
+      <li>从调研报告中提炼核心观点，去掉噪音</li>
+      <li>构建逻辑递进：冲击 → 诊断 → 本质 → 方案 → 验证 → 号召</li>
+      <li>每页只讲<strong>一个核心观点</strong>，一个就够了</li>
+      <li style="margin-top:0.6em; color: var(--accent); font-weight: 600;">如果你不能用一句话说清楚这页讲什么，这页就不该存在</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 17. Step 3 ====== -->
+  <div class="slide" data-index="16">
+    <p class="step-label">STEP 03</p>
+    <h2>视觉生成——白底黑字</h2>
+    <div class="key-message">最好的设计<br>是让观众看不见设计</div>
+    <ul>
+      <li><strong>大号字体</strong>，中间居中的一句话</li>
+      <li><strong>白底黑字</strong>：零视觉干扰，内容即视觉</li>
+      <li>每页一句核心观点：<strong>要么扎心</strong>（痛点），<strong>要么给刀</strong>（方法）</li>
+      <li>拒绝装饰元素：不需要图标、不需要渐变、不需要插图</li>
+    </ul>
+    <p class="note">川哥原话：白底黑字版确认前，不要进行视觉生成</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 18. 案例实战 ====== -->
+  <div class="slide" data-index="17">
+    <h2>案例实战：<br>真实客户的12小时</h2>
+    <div class="key-message">从调研到成片<br>传统3天的工作量压缩到12小时</div>
+    <ul>
+      <li><strong>客户</strong>：某科技公司，一份行业趋势分析PPT</li>
+      <li><strong>传统路径</strong>：3天，4轮修改，团队沟通成本极高</li>
+      <li><strong>川哥路径</strong>：多智能体调研 → 内容架构 → 网页幻灯片</li>
+      <li><strong>结果</strong>：12小时交付，客户当场认可，<strong>零修改</strong></li>
+    </ul>
+    <p class="note">关键差异：不用关心格式、不用导出、不用来回传文件</p>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 19. 核心认知 ====== -->
+  <div class="slide" data-index="18">
+    <h2>不是工具问题<br>是认知问题</h2>
+    <div class="key-message">升级认知比升级工具<br>重要100倍</div>
+    <ul>
+      <li>AIPPT工具本身没有错，错在<strong>用旧思维使用新工具</strong></li>
+      <li>如果你追求的还是"像PPT一样的PPTX"，那AI只是<strong>加速了你的错误</strong></li>
+      <li style="margin-top:0.6em;">真正的变革不是工具变革，是<strong>工作流程和思维方式的变革</strong></li>
+      <li style="margin-top:0.6em; color: var(--accent); font-weight: 600;">做PPT从来不是技术活，是思考活</li>
+    </ul>
+    <div class="corner-accent"></div>
+  </div>
+
+  <!-- ====== 20. Closing ====== -->
+  <div class="slide slide-closing" data-index="19">
+    <div style="max-width:700px; margin:0 auto;">
+      <h2 style="margin-bottom:0.3em;">从现在开始<br>换条路走</h2>
+      <div class="key-message" style="border:none;">
+        PPT不重要，观点才重要<br>
+        <span style="color:var(--accent);">PPTX不重要，传递才重要</span>
+      </div>
+      <p class="subtitle" style="margin-top:1.5em;">川哥，26年PPT老兵，一个真诚的建议</p>
+      <div style="margin-top:1.2em;">
+        <span class="call-to-action">停止在PPTX里堆砌</span>
+      </div>
+      <p style="margin-top:1em; color:var(--accent); font-size:clamp(0.9rem,1.6vw,1.2rem); font-weight:600;">开始用网页传递观点</p>
+    </div>
+    <div class="corner-accent"></div>
+  </div>
+
+</div>
+
+<!-- === Click zones === -->
+<div class="click-zone click-left" onclick="prevSlide()"></div>
+<div class="click-zone click-right" onclick="nextSlide()"></div>
+
+<!-- === Progress === -->
+<div class="progress-track">
+  <div class="progress-fill" id="progressFill" style="width:5%;"></div>
+</div>
+
+<!-- === Navigation === -->
+<div class="nav-bar">
+  <div class="page-info" id="pageInfo">1 / 20</div>
+  <div class="nav-arrows">
+    <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled>←</button>
+    <button class="nav-btn" id="nextBtn" onclick="nextSlide()">→</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = 0;
+
+    const pageInfo = document.getElementById('pageInfo');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressFill = document.getElementById('progressFill');
+
+    function update() {
+      slides.forEach((s, i) => s.classList.toggle('active', i === current));
+      pageInfo.textContent = (current + 1) + ' / ' + total;
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === total - 1;
+      progressFill.style.width = ((current + 1) / total * 100) + '%';
+    }
+
+    window.nextSlide = function() {
+      if (current < total - 1) { current++; update(); }
+    };
+
+    window.prevSlide = function() {
+      if (current > 0) { current--; update(); }
+    };
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault(); window.nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault(); window.prevSlide();
+      }
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    document.addEventListener('touchend', function(e) {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) window.nextSlide();
+        else window.prevSlide();
+      }
+    });
+
+    update();
+  })();
+</script>
+
+</body>
+</html>
