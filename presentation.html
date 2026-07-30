@@ -10,11 +10,10 @@
   .slides { position: relative; width: 100%; height: 100vh; }
   .slide {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 7% 10%;
+    display: flex; align-items: center;
+    padding: 0 5% 0 8%;
     opacity: 0; pointer-events: none;
     transition: opacity 0.4s ease;
-    overflow-y: auto;
   }
   .slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
   body {
@@ -22,82 +21,96 @@
     color: #1a1a1a;
     line-height: 1.6;
   }
-  h1 { font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; line-height: 1.3; margin-bottom: 0.4em; letter-spacing: 0.02em; }
-  h2 { font-size: clamp(1.3rem, 3.2vw, 2.6rem); font-weight: 600; line-height: 1.35; margin-bottom: 0.4em; }
-  h3 { font-size: clamp(1rem, 2.2vw, 1.8rem); font-weight: 600; line-height: 1.4; margin-bottom: 0.4em; color: #333; }
-  p  { font-size: clamp(0.95rem, 1.8vw, 1.4rem); margin-bottom: 0.5em; }
+  .slide-content { flex: 0 0 60%; padding-right: 4%; overflow-y: auto; max-height: 90vh; }
+  .slide-visual {
+    flex: 0 0 35%; height: 80vh;
+    display: flex; align-items: center; justify-content: center;
+    background: #f5f5f0; border-radius: 12px;
+    position: relative; overflow: hidden;
+  }
+  .slide-visual svg { max-width: 80%; max-height: 70%; }
+
+  h1 { font-size: clamp(1.8rem, 4.5vw, 3.5rem); font-weight: 700; line-height: 1.3; margin-bottom: 0.3em; }
+  h2 { font-size: clamp(1.2rem, 2.8vw, 2.2rem); font-weight: 600; line-height: 1.35; margin-bottom: 0.3em; }
+  p  { font-size: clamp(0.85rem, 1.6vw, 1.2rem); margin-bottom: 0.4em; color: #444; }
   ul { list-style: none; padding: 0; }
   li {
-    font-size: clamp(0.95rem, 1.8vw, 1.4rem);
-    padding: 0.35em 0 0.35em 1.5em;
+    font-size: clamp(0.85rem, 1.6vw, 1.2rem);
+    padding: 0.25em 0 0.25em 1.4em;
     position: relative;
     line-height: 1.5;
+    color: #333;
   }
   li::before { content: "›"; position: absolute; left: 0; color: #888; font-weight: bold; }
   li strong { color: #000; }
   .key-message {
-    font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+    font-size: clamp(1.2rem, 2.8vw, 2.2rem);
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.35;
     color: #000;
-    margin: 0.5em 0;
-    padding: 0.4em 0;
+    margin: 0.3em 0 0.4em;
+    padding: 0.3em 0;
     border-top: 2px solid #e0e0e0;
     border-bottom: 2px solid #e0e0e0;
   }
   .subtitle {
-    font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+    font-size: clamp(0.8rem, 1.4vw, 1.1rem);
     color: #666;
     font-style: italic;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
   }
   .step-label {
-    font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+    font-size: clamp(0.65rem, 1vw, 0.8rem);
     color: #999;
     font-weight: 700;
     letter-spacing: 0.12em;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.3em;
   }
-  .slide-cover { text-align: center; }
-  .slide-cover h1 { font-size: clamp(2.5rem, 5.5vw, 4.5rem); margin-bottom: 0.2em; }
-  .slide-cover .divider { width: 60px; height: 2px; background: #1a1a1a; margin: 1.2em auto; }
-  .slide-cover .subtitle { font-size: clamp(1rem, 2vw, 1.5rem); color: #888; }
-  .slide-section { text-align: center; background: #f8f8f8; }
-  .slide-section h2 { font-size: clamp(1.8rem, 4vw, 3.2rem); margin-bottom: 0.3em; }
+
+  .slide-cover { text-align: center; justify-content: center; }
+  .slide-cover .slide-content { flex: 0 0 100%; padding-right: 0; }
+  .slide-cover h1 { font-size: clamp(2.2rem, 5vw, 4rem); margin-bottom: 0.2em; }
+  .slide-cover .divider { width: 60px; height: 2px; background: #1a1a1a; margin: 1em auto; }
+  .slide-cover .subtitle { font-size: clamp(0.9rem, 1.8vw, 1.4rem); color: #888; }
+  .slide-cover .slide-visual { display: none; }
+
+  .slide-section { text-align: center; justify-content: center; }
+  .slide-section .slide-content { flex: 0 0 100%; padding-right: 0; }
+  .slide-section .slide-visual { display: none; }
+  .slide-section { background: #f8f8f8; }
+  .slide-section h2 { font-size: clamp(1.6rem, 3.5vw, 2.8rem); margin-bottom: 0.2em; }
   .slide-section .section-number {
-    font-size: clamp(3rem, 7vw, 5rem);
-    font-weight: 700;
-    color: #ddd;
-    margin-bottom: 0.1em;
-    line-height: 1;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 700; color: #ddd;
+    margin-bottom: 0.1em; line-height: 1;
   }
-  .slide-closing { text-align: center; }
+
+  .slide-closing { text-align: center; justify-content: center; }
+  .slide-closing .slide-content { flex: 0 0 100%; padding-right: 0; }
+  .slide-closing .slide-visual { display: none; }
   .call-to-action {
-    font-size: clamp(1rem, 2.2vw, 1.6rem);
-    font-weight: 700;
-    color: #1a1a1a;
-    margin-top: 1em;
-    padding: 0.6em 1.2em;
-    border: 3px solid #1a1a1a;
-    display: inline-block;
+    font-size: clamp(0.9rem, 2vw, 1.4rem);
+    font-weight: 700; color: #1a1a1a;
+    margin-top: 0.8em; padding: 0.5em 1.2em;
+    border: 3px solid #1a1a1a; display: inline-block;
   }
+
   .nav-bar {
     position: fixed; bottom: 0; left: 0; width: 100%;
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0.6em 2em; z-index: 10;
+    padding: 0.5em 2em; z-index: 10;
     background: linear-gradient(transparent, rgba(255,255,255,0.9) 35%);
     pointer-events: none;
   }
   .nav-bar > * { pointer-events: auto; }
-  .page-info { font-size: 0.8rem; color: #999; font-family: Georgia, serif; }
-  .nav-arrows { display: flex; gap: 0.6em; }
+  .page-info { font-size: 0.75rem; color: #999; font-family: Georgia, serif; }
+  .nav-arrows { display: flex; gap: 0.5em; }
   .nav-btn {
     background: none; border: 1px solid #ccc;
-    border-radius: 50%; width: 34px; height: 34px;
-    font-size: 1rem; cursor: pointer; color: #666;
+    border-radius: 50%; width: 30px; height: 30px;
+    font-size: 0.9rem; cursor: pointer; color: #666;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    font-family: Georgia, serif;
+    transition: all 0.2s; font-family: Georgia, serif;
   }
   .nav-btn:hover { border-color: #1a1a1a; color: #1a1a1a; background: #f5f5f5; }
   .nav-btn:disabled { opacity: 0.3; cursor: default; }
@@ -106,19 +119,24 @@
   .click-zone { position: fixed; top: 0; bottom: 2px; width: 40%; z-index: 5; cursor: pointer; }
   .click-left { left: 0; }
   .click-right { right: 0; }
+
   @media print {
     @page { size: A4 landscape; margin: 1.2cm; }
     html, body { overflow: visible; background: white; }
     .slides { height: auto; }
     .slide { position: relative; opacity: 1 !important; pointer-events: none; break-after: page; height: 100vh; page-break-after: always; padding: 5% 8%; }
+    .slide-visual { display: none !important; }
+    .slide-content { flex: 0 0 100%; }
     .nav-bar, .click-zone, .progress-track { display: none !important; }
     .slide:last-child { break-after: auto; }
   }
   @media (max-width: 768px) {
-    .slide { padding: 5% 7%; }
-    .key-message { font-size: clamp(1.1rem, 3.5vw, 1.5rem); }
-    li { font-size: clamp(0.85rem, 2.8vw, 1.1rem); }
-    .nav-bar { padding: 0.4em 1em; }
+    .slide { flex-direction: column; padding: 5% 6%; }
+    .slide-content { flex: 0 0 100%; padding-right: 0; max-height: 60vh; }
+    .slide-visual { display: none !important; }
+    .key-message { font-size: clamp(1rem, 3.2vw, 1.4rem); }
+    li { font-size: clamp(0.8rem, 2.5vw, 1rem); }
+    .nav-bar { padding: 0.3em 1em; }
   }
 </style>
 </head>
@@ -126,191 +144,365 @@
 
 <div class="slides" id="slides">
 
-  <!-- 1. Cover -->
+  <!-- ===== 1. Cover ===== -->
   <div class="slide slide-cover active" data-index="0">
-    <h1>AI视频自动化工作流<br>全流程解析</h1>
-    <div class="divider"></div>
-    <p class="subtitle">7步落地 · 模型选型 · 成本区间 · 避坑指南</p>
-  </div>
-
-  <!-- 2. 核心观点 -->
-  <div class="slide" data-index="1">
-    <h2>AI视频自动化不是魔法，是工程</h2>
-    <div class="key-message">不是一键出片<br>是一套可落地的7步流水线</div>
-    <ul>
-      <li>人工投入：<strong>不到10分钟</strong>/条</li>
-      <li>AI运算时间：<strong>1-2小时</strong></li>
-      <li>成本区间：<strong>10元~百元</strong>/条</li>
-      <li>核心原则：人参与效果更好，不参与也能出</li>
-    </ul>
-  </div>
-
-  <!-- 3. 模型栈 -->
-  <div class="slide" data-index="2">
-    <h2>全流程模型栈</h2>
-    <div class="key-message">每个环节都有最优选型</div>
-    <ul>
-      <li><strong>总编导</strong>：Claude Code</li>
-      <li><strong>配音</strong>：MiniMax 2.8HD Speech</li>
-      <li><strong>数字人</strong>：16数字人</li>
-      <li><strong>信息图</strong>：GPT Image 2</li>
-      <li><strong>动态渲染</strong>：HyperFrames</li>
-      <li><strong>字幕对齐</strong>：Gemini 2.5 Flash</li>
-      <li><strong>合成发布</strong>：FFmpeg + 浏览器自动化</li>
-    </ul>
-  </div>
-
-  <!-- 4. Section: 七步流程 -->
-  <div class="slide slide-section" data-index="3">
-    <div class="section-number">Ⅰ</div>
-    <h2>七步流程拆解</h2>
-    <p class="subtitle">从选题到发布，每一步都有讲究</p>
-  </div>
-
-  <!-- 5. 第一步：选题 -->
-  <div class="slide" data-index="4">
-    <p class="step-label">STEP 01</p>
-    <h2>选题</h2>
-    <div class="key-message">AI选题 vs 自己选题</div>
-    <ul>
-      <li>本地自动化热点选题工具已搭建</li>
-      <li>但实际更多用<strong>自己选题</strong>——粉丝想听的</li>
-      <li>AI选题流量可能更好，但粉丝想要的内容必须讲</li>
-      <li style="font-weight:600; margin-top:0.4em;">内容价值 > 流量技巧</li>
-    </ul>
-  </div>
-
-  <!-- 6. 第二步：语言指纹 -->
-  <div class="slide" data-index="5">
-    <p class="step-label">STEP 02</p>
-    <h2>语言指纹</h2>
-    <div class="key-message">对抗"翻译腔AI味"的关键</div>
-    <ul>
-      <li>用历史口播稿件提取<strong>表达结构和风格</strong></li>
-      <li>Zonet 4.6/GPT5后的模型都是英文思考→中文翻译</li>
-      <li>翻译腔举例："流程循环" vs "人在环里"</li>
-      <li style="font-weight:600; margin-top:0.4em;">语言指纹让AI输出像"人话"</li>
-    </ul>
-  </div>
-
-  <!-- 7. 第三步：内容出稿 -->
-  <div class="slide" data-index="6">
-    <p class="step-label">STEP 03</p>
-    <h2>内容出稿</h2>
-    <div class="key-message">全面堆叠，交给中版模型审查</div>
-    <ul>
-      <li>背景资料、案例、行文逻辑<strong>全面写下来</strong></li>
-      <li>发给DeepSeek或Kimi K3进行中版撰写和审查</li>
-      <li>这一步是<strong>内容质量的基石</strong></li>
-    </ul>
-  </div>
-
-  <!-- 8. 第四步：音频生成 -->
-  <div class="slide" data-index="7">
-    <p class="step-label">STEP 04</p>
-    <h2>音频生成</h2>
-    <div class="key-message">MiniMax 2.8HD — 当前最强TTS</div>
-    <ul>
-      <li>先<strong>克隆音色</strong>，再用TTS生成</li>
-      <li>选提供<strong>API调用</strong>的模型（自动化前提）</li>
-      <li>Claude Code预处理：多音字、数字、停顿、拟声词</li>
-      <li>变成"语言模型更容易理解的<strong>口播稿</strong>"</li>
-    </ul>
-  </div>
-
-  <!-- 9. 第五步：数字人 -->
-  <div class="slide" data-index="8">
-    <p class="step-label">STEP 05</p>
-    <h2>数字人</h2>
-    <div class="key-message">选择提供API服务的平台</div>
-    <ul>
-      <li><strong>16数字人</strong>API — 清晰度+嘴形准确度最优</li>
-      <li>Claude Code按语速/情绪<strong>分段</strong></li>
-      <li>不同片段匹配不同数字人色彩</li>
-      <li>一段一段生成→拼接→<strong>像剪辑过一样自然</strong></li>
-    </ul>
-  </div>
-
-  <!-- 10. 第六步：封面+视觉 -->
-  <div class="slide" data-index="9">
-    <p class="step-label">STEP 06</p>
-    <h2>封面 + 视觉内容</h2>
-    <div class="key-message">3:4 / 4:3 / 16:9 三尺寸同步生成</div>
-    <ul>
-      <li>自动检测<strong>人物一致性</strong></li>
-      <li>逐字稿精准切割→第几秒用什么画面</li>
-      <li>HyperFrames生成<strong>网页动画</strong>效果</li>
-      <li>GPT Image 2生成全图（粉笔字/陶土风格）</li>
-    </ul>
-  </div>
-
-  <!-- 11. 第七步：合成+发布 -->
-  <div class="slide" data-index="10">
-    <p class="step-label">STEP 07</p>
-    <h2>合成 + 发布</h2>
-    <div class="key-message">FFmpeg合成 + 浏览器自动化发布</div>
-    <ul>
-      <li>视频素材拼接+<strong>字幕合成</strong>烧录</li>
-      <li>自动贴日期和主张贴图</li>
-      <li>AI写<strong>5个平台</strong>的标题/标签/文案</li>
-      <li>自动打开网页填写→<strong>人工检查</strong>→按发布</li>
-    </ul>
-  </div>
-
-  <!-- 12. 时间与成本 -->
-  <div class="slide" data-index="11">
-    <h2>真实的时间与成本</h2>
-    <div class="key-message">10元到百元级，1-2小时运算</div>
-    <ul>
-      <li>人工投入：<strong>不到10分钟</strong></li>
-      <li>AI运算：<strong>1-2小时</strong>（思考+转写+生图+合成）</li>
-      <li>最低成本：替换性价比高的模型→<strong>几块钱/条</strong></li>
-      <li>最高品质：丰富图片+高密度→<strong>几百块/条</strong></li>
-      <li>视频生成后有<strong>自动质检</strong></li>
-    </ul>
-  </div>
-
-  <!-- 13. 避坑指南 -->
-  <div class="slide" data-index="12">
-    <h2>避坑指南</h2>
-    <div class="key-message">少走弯路的3个关键</div>
-    <ul>
-      <li><strong>APG2出图</strong>：一定要整图出，不要背景叠字</li>
-      <li><strong>API调用</strong>：调用前先自检，不浪费钱</li>
-      <li><strong>数字人视频</strong>：爆了可能触发"肉身审核"</li>
-    </ul>
-  </div>
-
-  <!-- 14. 三个常问问题 -->
-  <div class="slide" data-index="13">
-    <h2>粉丝常问的三个问题</h2>
-    <div class="key-message">全自动·数字人识别·普通人复刻</div>
-    <ul>
-      <li><strong>Q1：全自动一键出片？</strong><br>可以，但人参与效果更好</li>
-      <li><strong>Q2：观众知道是数字人？</strong><br>爆款有过百万播放，但平台有审核规则</li>
-      <li><strong>Q3：普通人能复刻？</strong><br>可以，但需要花时间调试Agent Loop</li>
-    </ul>
-  </div>
-
-  <!-- 15. 价值观 -->
-  <div class="slide" data-index="14">
-    <h2>关于价值观</h2>
-    <div class="key-message">赚的每一分钱都干净</div>
-    <ul>
-      <li>"道德水平高赚不到大钱"？<strong>不认同</strong></li>
-      <li>知道怎么打包卖课，但<strong>不做对交付不负责任的事</strong></li>
-      <li style="font-weight:600; margin-top:0.4em;">睡得踏踏实实，比赚快钱重要</li>
-    </ul>
-  </div>
-
-  <!-- 16. Closing -->
-  <div class="slide slide-closing" data-index="15">
-    <h2 style="margin-bottom:0.3em;">AI视频自动化<br>从这套流程开始</h2>
-    <div class="key-message" style="border:none;">
-      工具在迭代，但流程的思维框架不变
+    <div class="slide-content">
+      <h1>AI视频自动化工作流<br>全流程解析</h1>
+      <div class="divider"></div>
+      <p class="subtitle">7步落地 · 模型选型 · 成本区间 · 避坑指南</p>
     </div>
-    <div style="margin-top:1.2em;">
-      <span class="call-to-action">选模型 · 搭流程 · 跑起来</span>
+  </div>
+
+  <!-- ===== 2. 核心观点 ===== -->
+  <div class="slide" data-index="1">
+    <div class="slide-content">
+      <h2>AI视频自动化不是魔法，是工程</h2>
+      <div class="key-message">不是一键出片<br>是一套可落地的7步流水线</div>
+      <ul>
+        <li>人工投入：<strong>不到10分钟</strong>/条</li>
+        <li>AI运算时间：<strong>1-2小时</strong></li>
+        <li>成本区间：<strong>10元~百元</strong>/条</li>
+        <li>核心原则：人参与效果更好，不参与也能出</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="50" r="30" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+        <text x="100" y="56" text-anchor="middle" font-size="14" fill="#1a1a1a" font-family="Georgia,serif">7</text>
+        <line x1="100" y1="80" x2="100" y2="200" stroke="#ddd" stroke-width="2" stroke-dasharray="4,4"/>
+        <circle cx="100" cy="200" r="8" fill="#1a1a1a"/>
+        <text x="100" y="228" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">流水线</text>
+        <rect x="55" y="110" width="90" height="6" rx="3" fill="#e0e0e0"/>
+        <rect x="55" y="126" width="70" height="6" rx="3" fill="#e0e0e0"/>
+        <rect x="55" y="142" width="80" height="6" rx="3" fill="#e0e0e0"/>
+        <rect x="55" y="158" width="60" height="6" rx="3" fill="#e0e0e0"/>
+        <rect x="55" y="174" width="75" height="6" rx="3" fill="#e0e0e0"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 3. 模型栈 ===== -->
+  <div class="slide" data-index="2">
+    <div class="slide-content">
+      <h2>全流程模型栈</h2>
+      <div class="key-message">每个环节都有最优选型</div>
+      <ul>
+        <li><strong>总编导</strong>：Claude Code</li>
+        <li><strong>配音</strong>：MiniMax TTS，克隆音色</li>
+        <li><strong>数字人</strong>：石榴数字人API + FFmpeg拼接</li>
+        <li><strong>信息图</strong>：GPT Image 2</li>
+        <li><strong>动态渲染</strong>：HyperFrames</li>
+        <li><strong>字幕对齐</strong>：Gemini 2.5 Flash</li>
+        <li><strong>合成发布</strong>：FFmpeg + 浏览器自动化</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+        <rect x="40" y="10" width="120" height="28" rx="4" fill="#1a1a1a"/>
+        <text x="100" y="29" text-anchor="middle" font-size="11" fill="white" font-family="Georgia,serif">Claude Code</text>
+        <line x1="100" y1="38" x2="100" y2="48" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="40" y="48" width="120" height="26" rx="4" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+        <text x="100" y="65" text-anchor="middle" font-size="10" fill="#333" font-family="Georgia,serif">MiniMax TTS</text>
+        <line x1="100" y1="74" x2="100" y2="84" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="40" y="84" width="120" height="26" rx="4" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+        <text x="100" y="101" text-anchor="middle" font-size="10" fill="#333" font-family="Georgia,serif">石榴数字人+FFmpeg</text>
+        <line x1="100" y1="110" x2="100" y2="120" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="40" y="120" width="120" height="26" rx="4" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+        <text x="100" y="137" text-anchor="middle" font-size="10" fill="#333" font-family="Georgia,serif">GPT Image 2</text>
+        <line x1="100" y1="146" x2="100" y2="156" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="40" y="156" width="120" height="26" rx="4" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+        <text x="100" y="173" text-anchor="middle" font-size="10" fill="#333" font-family="Georgia,serif">HyperFrames</text>
+        <line x1="100" y1="182" x2="100" y2="192" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="40" y="192" width="120" height="26" rx="4" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+        <text x="100" y="209" text-anchor="middle" font-size="10" fill="#333" font-family="Georgia,serif">Gemini Flash</text>
+        <line x1="100" y1="218" x2="100" y2="228" stroke="#ddd" stroke-width="1.5"/>
+        <rect x="40" y="228" width="120" height="26" rx="4" fill="#1a1a1a"/>
+        <text x="100" y="246" text-anchor="middle" font-size="10" fill="white" font-family="Georgia,serif">FFmpeg+发布</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 4. Section: 七步流程 ===== -->
+  <div class="slide slide-section" data-index="3">
+    <div class="slide-content">
+      <div class="section-number">Ⅰ</div>
+      <h2>七步流程拆解</h2>
+      <p class="subtitle">从选题到发布，每一步都有讲究</p>
+    </div>
+  </div>
+
+  <!-- ===== 5. 第一步：选题 ===== -->
+  <div class="slide" data-index="4">
+    <div class="slide-content">
+      <p class="step-label">STEP 01</p>
+      <h2>选题</h2>
+      <div class="key-message">AI选题 vs 自己选题</div>
+      <ul>
+        <li>本地自动化热点选题工具已搭建</li>
+        <li>但实际更多用<strong>自己选题</strong>——粉丝想听的</li>
+        <li>AI选题流量可能更好，但粉丝想要的内容必须讲</li>
+        <li style="font-weight:600; margin-top:0.3em; color:#000;">内容价值 > 流量技巧</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="65" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="40" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <circle cx="100" cy="100" r="15" fill="#1a1a1a"/>
+        <line x1="115" y1="100" x2="165" y2="100" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="100" y1="115" x2="100" y2="165" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="89" y1="89" x2="55" y2="55" stroke="#ddd" stroke-width="1.5"/>
+        <text x="100" y="195" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">瞄准目标</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 6. 第二步：语言指纹 ===== -->
+  <div class="slide" data-index="5">
+    <div class="slide-content">
+      <p class="step-label">STEP 02</p>
+      <h2>语言指纹</h2>
+      <div class="key-message">对抗"翻译腔AI味"的关键</div>
+      <ul>
+        <li>用历史口播稿件提取<strong>表达结构和风格</strong></li>
+        <li>Zonet 4.6/GPT5后的模型都是英文思考→中文翻译</li>
+        <li>翻译腔举例："流程循环" vs "人在环里"</li>
+        <li style="font-weight:600; margin-top:0.3em; color:#000;">语言指纹让AI输出像"人话"</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="20" width="160" height="40" rx="4" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <text x="30" y="46" font-size="9" fill="#bbb" font-family="Georgia,serif">人在环里</text>
+        <line x1="100" y1="60" x2="100" y2="80" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="20" y="80" width="160" height="40" rx="4" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="30" y="106" font-size="9" fill="#1a1a1a" font-family="Georgia,serif">流程循环</text>
+        <line x1="100" y1="120" x2="100" y2="140" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="50" y="140" width="100" height="30" rx="15" fill="#1a1a1a"/>
+        <text x="100" y="160" text-anchor="middle" font-size="10" fill="white" font-family="Georgia,serif">像人话</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 7. 第三步：内容出稿 ===== -->
+  <div class="slide" data-index="6">
+    <div class="slide-content">
+      <p class="step-label">STEP 03</p>
+      <h2>内容出稿</h2>
+      <div class="key-message">全面堆叠，交给中版模型审查</div>
+      <ul>
+        <li>背景资料、案例、行文逻辑<strong>全面写下来</strong></li>
+        <li>发给DeepSeek或Kimi K3进行中版撰写和审查</li>
+        <li>这一步是<strong>内容质量的基石</strong></li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="40" y="20" width="120" height="160" rx="4" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="55" y1="50" x2="145" y2="50" stroke="#ddd" stroke-width="1.5"/>
+        <line x1="55" y1="65" x2="130" y2="65" stroke="#ddd" stroke-width="1.5"/>
+        <line x1="55" y1="80" x2="140" y2="80" stroke="#ddd" stroke-width="1.5"/>
+        <line x1="55" y1="95" x2="125" y2="95" stroke="#ddd" stroke-width="1.5"/>
+        <line x1="55" y1="110" x2="135" y2="110" stroke="#ddd" stroke-width="1.5"/>
+        <line x1="55" y1="125" x2="120" y2="125" stroke="#ddd" stroke-width="1.5"/>
+        <line x1="55" y1="140" x2="138" y2="140" stroke="#ddd" stroke-width="1.5"/>
+        <circle cx="60" cy="40" r="4" fill="#1a1a1a"/>
+        <text x="100" y="180" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">稿件</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 8. 第四步：音频生成 ===== -->
+  <div class="slide" data-index="7">
+    <div class="slide-content">
+      <p class="step-label">STEP 04</p>
+      <h2>音频生成</h2>
+      <div class="key-message">MiniMax TTS — 克隆音色+生成</div>
+      <ul>
+        <li>先<strong>克隆音色</strong>，再用TTS生成</li>
+        <li>选提供<strong>API调用</strong>的模型（自动化前提）</li>
+        <li>Claude Code预处理：多音字、数字、停顿、拟声词</li>
+        <li>变成"语言模型更容易理解的<strong>口播稿</strong>"</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="100" r="25" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <path d="M95 60 Q120 60 130 100 Q120 140 95 140" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <path d="M110 40 Q145 40 160 100 Q145 160 110 160" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <path d="M125 25 Q170 25 185 100 Q170 175 125 175" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="100" y="195" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">声波·克隆</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 9. 第五步：数字人 ===== -->
+  <div class="slide" data-index="8">
+    <div class="slide-content">
+      <p class="step-label">STEP 05</p>
+      <h2>数字人</h2>
+      <div class="key-message">石榴数字人API + FFmpeg拼接</div>
+      <ul>
+        <li><strong>石榴数字人</strong>API — 清晰度+嘴形准确度最优</li>
+        <li>Claude Code按语速/情绪<strong>分段</strong></li>
+        <li>不同片段匹配不同数字人色彩</li>
+        <li>一段一段生成→<strong>FFmpeg拼接</strong>→像剪辑过一样自然</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="65" r="30" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <circle cx="92" cy="58" r="4" fill="#1a1a1a"/>
+        <circle cx="108" cy="58" r="4" fill="#1a1a1a"/>
+        <path d="M88 72 Q100 80 112 72" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <path d="M65 110 Q70 105 75 110" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <path d="M125 110 Q130 105 135 110" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="60" y="110" width="80" height="50" rx="4" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="60" y1="130" x2="140" y2="130" stroke="#ddd" stroke-width="1"/>
+        <text x="100" y="145" text-anchor="middle" font-size="9" fill="#999" font-family="Georgia,serif">FFmpeg</text>
+        <text x="100" y="195" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">数字人</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 10. 第六步：封面+视觉 ===== -->
+  <div class="slide" data-index="9">
+    <div class="slide-content">
+      <p class="step-label">STEP 06</p>
+      <h2>封面 + 视觉内容</h2>
+      <div class="key-message">3:4 / 4:3 / 16:9 三尺寸同步生成</div>
+      <ul>
+        <li>自动检测<strong>人物一致性</strong></li>
+        <li>逐字稿精准切割→第几秒用什么画面</li>
+        <li>HyperFrames生成<strong>网页动画</strong>效果</li>
+        <li>GPT Image 2生成全图（粉笔字/陶土风格）</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="15" width="60" height="100" rx="3" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <text x="60" y="70" text-anchor="middle" font-size="8" fill="#bbb" font-family="Georgia,serif">3:4</text>
+        <rect x="110" y="15" width="80" height="60" rx="3" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="150" y="50" text-anchor="middle" font-size="8" fill="#1a1a1a" font-family="Georgia,serif">16:9</text>
+        <rect x="30" y="130" width="80" height="60" rx="3" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <text x="70" y="165" text-anchor="middle" font-size="8" fill="#bbb" font-family="Georgia,serif">4:3</text>
+        <circle cx="160" cy="170" r="15" fill="none" stroke="#1a1a1a" stroke-width="1"/>
+        <text x="160" y="175" text-anchor="middle" font-size="10" fill="#1a1a1a" font-family="Georgia,serif">✨</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 11. 第七步：合成+发布 ===== -->
+  <div class="slide" data-index="10">
+    <div class="slide-content">
+      <p class="step-label">STEP 07</p>
+      <h2>合成 + 发布</h2>
+      <div class="key-message">FFmpeg合成 + 浏览器自动化发布</div>
+      <ul>
+        <li>视频素材拼接+<strong>字幕合成</strong>烧录</li>
+        <li>自动贴日期和主张贴图</li>
+        <li>AI写<strong>5个平台</strong>的标题/标签/文案</li>
+        <li>自动打开网页填写→<strong>人工检查</strong>→按发布</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="20" width="60" height="40" rx="3" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <text x="60" y="46" text-anchor="middle" font-size="8" fill="#bbb" font-family="Georgia,serif">素材</text>
+        <rect x="110" y="20" width="60" height="40" rx="3" fill="none" stroke="#ddd" stroke-width="1.5"/>
+        <text x="140" y="46" text-anchor="middle" font-size="8" fill="#bbb" font-family="Georgia,serif">字幕</text>
+        <rect x="55" y="70" width="90" height="30" rx="4" fill="#1a1a1a"/>
+        <text x="100" y="90" text-anchor="middle" font-size="9" fill="white" font-family="Georgia,serif">FFmpeg</text>
+        <line x1="100" y1="100" x2="100" y2="120" stroke="#1a1a1a" stroke-width="2"/>
+        <path d="M60 130 L100 150 L140 130" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="50" y="155" width="100" height="25" rx="12" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="172" text-anchor="middle" font-size="9" fill="#1a1a1a" font-family="Georgia,serif">发布</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 12. 时间与成本 ===== -->
+  <div class="slide" data-index="11">
+    <div class="slide-content">
+      <h2>真实的时间与成本</h2>
+      <div class="key-message">10元到百元级，1-2小时运算</div>
+      <ul>
+        <li>人工投入：<strong>不到10分钟</strong></li>
+        <li>AI运算：<strong>1-2小时</strong>（思考+转写+生图+合成）</li>
+        <li>最低成本：替换性价比高的模型→<strong>几块钱/条</strong></li>
+        <li>最高品质：丰富图片+高密度→<strong>几百块/条</strong></li>
+        <li>视频生成后有<strong>自动质检</strong></li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="80" r="55" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="100" y1="80" x2="100" y2="45" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="100" y1="80" x2="130" y2="90" stroke="#1a1a1a" stroke-width="1.5"/>
+        <circle cx="100" cy="80" r="5" fill="#1a1a1a"/>
+        <text x="100" y="170" text-anchor="middle" font-size="24" font-weight="bold" fill="#1a1a1a" font-family="Georgia,serif">10</text>
+        <text x="100" y="185" text-anchor="middle" font-size="8" fill="#999" font-family="Georgia,serif">分钟~百元</text>
+        <text x="100" y="195" text-anchor="middle" font-size="7" fill="#bbb" font-family="Georgia,serif">人工/成本</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 13. 避坑指南 ===== -->
+  <div class="slide" data-index="12">
+    <div class="slide-content">
+      <h2>避坑指南</h2>
+      <div class="key-message">少走弯路的3个关键</div>
+      <ul>
+        <li><strong>APG2出图</strong>：一定要整图出，不要背景叠字</li>
+        <li><strong>API调用</strong>：调用前先自检，不浪费钱</li>
+        <li><strong>数字人视频</strong>：爆了可能触发"肉身审核"</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 15 L175 170 L25 170 Z" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="100" y1="65" x2="100" y2="120" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="100" y1="135" x2="100" y2="150" stroke="#1a1a1a" stroke-width="2"/>
+        <text x="100" y="50" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a1a" font-family="Georgia,serif">!</text>
+        <text x="100" y="195" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">避坑</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 14. FAQ ===== -->
+  <div class="slide" data-index="13">
+    <div class="slide-content">
+      <h2>粉丝常问的三个问题</h2>
+      <div class="key-message">全自动 · 数字人识别 · 普通人复刻</div>
+      <ul>
+        <li><strong>Q1：全自动一键出片？</strong><br>可以，但人参与效果更好</li>
+        <li><strong>Q2：观众知道是数字人？</strong><br>爆款有过百万播放，但平台有审核规则</li>
+        <li><strong>Q3：普通人能复刻？</strong><br>可以，但需要花时间调试Agent Loop</li>
+      </ul>
+    </div>
+    <div class="slide-visual">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="60" r="30" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="66" text-anchor="middle" font-size="20" fill="#1a1a1a" font-family="Georgia,serif">?</text>
+        <line x1="100" y1="90" x2="100" y2="110" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="85" y1="120" x2="115" y2="120" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="85" y1="130" x2="115" y2="130" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="85" y1="140" x2="115" y2="140" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="195" text-anchor="middle" font-size="10" fill="#999" font-family="Georgia,serif">Q&A</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== 15. Closing ===== -->
+  <div class="slide slide-closing" data-index="14">
+    <div class="slide-content">
+      <h2 style="margin-bottom:0.2em;">AI视频自动化<br>从这套流程开始</h2>
+      <div class="key-message" style="border:none;">
+        工具在迭代，但流程的思维框架不变
+      </div>
+      <div style="margin-top:1em;">
+        <span class="call-to-action">选模型 · 搭流程 · 跑起来</span>
+      </div>
     </div>
   </div>
 
@@ -318,9 +510,9 @@
 
 <div class="click-zone click-left" onclick="prevSlide()"></div>
 <div class="click-zone click-right" onclick="nextSlide()"></div>
-<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:6.25%;"></div></div>
+<div class="progress-track"><div class="progress-fill" id="progressFill" style="width:6.67%;"></div></div>
 <div class="nav-bar">
-  <div class="page-info" id="pageInfo">1 / 16</div>
+  <div class="page-info" id="pageInfo">1 / 15</div>
   <div class="nav-arrows">
     <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled>←</button>
     <button class="nav-btn" id="nextBtn" onclick="nextSlide()">→</button>
@@ -358,6 +550,5 @@
     update();
   })();
 </script>
-
 </body>
 </html>
