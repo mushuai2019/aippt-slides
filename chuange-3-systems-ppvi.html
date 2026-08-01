@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>川哥AI+内容获客营销 · 全链路三大系统</title>
+<style>
+/* ============ PPVI Design Tokens ============ */
+:root{
+  /* 灰阶基底（深色主题） */
+  --bg-0:#141516;
+  --bg-1:#1a1b1d;
+  --bg-2:#212225;
+  --ink-hi:#f4f2ee;   /* 最亮文字 */
+  --ink-mid:#b9b7b2;  /* 次级 */
+  --ink-low:#87847f;  /* 弱化 */
+  --line:rgba(255,255,255,.08);
+  /* 强调色（唯一彩色，占比<15%）*/
+  --accent:#c9a97e;   /* 柔金 */
+  --accent-soft:rgba(201,169,126,.12);
+  /* 玻璃 */
+  --glass:rgba(255,255,255,.045);
+  --glass-border:rgba(255,255,255,.09);
+  /* 字号系统：5级，clamp fluid，跨级≥1.4x */
+  --fs-display:clamp(52px, 8.5vw, 112px);
+  --fs-headline:clamp(36px, 5.2vw, 64px);
+  --fs-subtitle:clamp(22px, 2.6vw, 30px);
+  --fs-body:clamp(16px, 1.55vw, 21px);
+  --fs-caption:clamp(13px, 1.05vw, 15px);
+  --radius:16px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg-0);
+  color:var(--ink-hi);
+  font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+  line-height:1.6;
+  overflow:hidden;
+  word-break:keep-all;overflow-wrap:anywhere;
+  -webkit-font-smoothing:antialiased;
+}
+/* 背景噪点（PPVI: SVG noise, opacity .03-.08）*/
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+/* 微妙背景渐变（克制，非彩虹）*/
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 75% 10%, rgba(201,169,126,.05), transparent 60%),
+    radial-gradient(50% 40% at 15% 90%, rgba(255,255,255,.03), transparent 60%);
+}
+
+/* ============ Deck ============ */
+.deck{position:relative;z-index:1;height:100%}
+.slide{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:clamp(32px,6vh,72px) clamp(32px,7vw,120px);
+  opacity:0;visibility:hidden;transform:translateY(24px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease),visibility 0s .6s;
+}
+.slide.active{opacity:1;visibility:visible;transform:translateY(0);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.slide-inner{width:100%;max-width:1120px;margin:0 auto}
+/* 入场 stagger */
+.slide .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.slide.active .reveal{opacity:1;transform:translateY(0)}
+.slide.active .reveal:nth-child(2){transition-delay:.08s}
+.slide.active .reveal:nth-child(3){transition-delay:.16s}
+.slide.active .reveal:nth-child(4){transition-delay:.24s}
+.slide.active .reveal:nth-child(5){transition-delay:.32s}
+.slide.active .reveal:nth-child(6){transition-delay:.4s}
+
+/* ============ 字号层级（5级，严格） ============ */
+.display{font-size:var(--fs-display);font-weight:700;line-height:1.08;letter-spacing:-.02em}
+.headline{font-size:var(--fs-headline);font-weight:700;line-height:1.18;letter-spacing:-.015em}
+.subtitle{font-size:var(--fs-subtitle);font-weight:600;line-height:1.35}
+.body{font-size:var(--fs-body);font-weight:400;color:var(--ink-mid);line-height:1.75}
+.caption{font-size:var(--fs-caption);font-weight:400;color:var(--ink-low);letter-spacing:.04em}
+
+/* 强调（三权重，不用字号变化）*/
+.accent{color:var(--accent);font-weight:600}
+.weak{color:var(--ink-low)}
+
+/* ============ 玻璃卡片 ============ */
+.glass{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius);
+  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  box-shadow:0 24px 64px rgba(0,0,0,.28);
+}
+.card{padding:clamp(18px,2.4vh,28px);height:100%}
+.card .num{font-size:var(--fs-caption);color:var(--accent);font-weight:600;letter-spacing:.12em}
+.card h3{font-size:var(--fs-subtitle);font-weight:600;margin:10px 0 8px}
+.card p{font-size:var(--fs-body);color:var(--ink-mid);line-height:1.6}
+.card ul{list-style:none;margin-top:14px}
+.card li{font-size:var(--fs-body);color:var(--ink-mid);line-height:1.65;padding:6px 0;border-bottom:1px solid var(--line)}
+.card li:last-child{border-bottom:none}
+
+/* 网格：间距系统（卡片内紧凑12-16，卡片间宽松24-32）*/
+.grid{display:grid;gap:24px;margin-top:clamp(28px,4.5vh,48px)}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+
+/* ============ 封面 ============ */
+.cover .kicker{display:flex;align-items:center;gap:14px;margin-bottom:clamp(20px,3vh,32px)}
+.cover .kicker .rule{width:44px;height:1px;background:var(--accent)}
+.cover .quote{margin-top:clamp(24px,4vh,40px);padding-left:18px;border-left:2px solid var(--accent)}
+.cover .meta{margin-top:clamp(28px,4.5vh,48px);display:flex;gap:32px;flex-wrap:wrap}
+
+/* ============ 流程条 ============ */
+.pipeline{display:flex;align-items:stretch;gap:0;margin-top:clamp(28px,4.5vh,48px)}
+.pipe-step{flex:1;padding:20px 22px;position:relative}
+.pipe-step + .pipe-step::before{
+  content:"";position:absolute;left:0;top:50%;width:1px;height:60%;transform:translateY(-50%);background:var(--line);
+}
+.pipe-step .tag{font-size:var(--fs-caption);color:var(--accent);font-weight:600;letter-spacing:.1em}
+.pipe-step h4{font-size:var(--fs-subtitle);font-weight:600;margin:6px 0 4px}
+.pipe-step p{font-size:var(--fs-body);color:var(--ink-low);line-height:1.5}
+
+/* ============ 数字大字 ============ */
+.bignum{font-size:clamp(40px,6vw,72px);font-weight:700;color:var(--ink-hi);line-height:1}
+.bignum .unit{font-size:.38em;font-weight:400;color:var(--ink-low);margin-left:6px}
+
+/* ============ 导航 ============ */
+.nav-dots{position:fixed;right:clamp(16px,2.4vw,32px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:5}
+.nav-dots button{width:8px;height:8px;border-radius:50%;border:none;background:var(--ink-low);opacity:.45;cursor:pointer;transition:all .3s;padding:0}
+.nav-dots button.on{background:var(--accent);opacity:1;transform:scale(1.35)}
+.nav-arrow{
+  position:fixed;bottom:clamp(20px,3.4vh,36px);right:clamp(24px,3.4vw,48px);z-index:5;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);color:var(--ink-hi);
+  font-size:20px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;
+}
+.nav-arrow:hover{background:var(--accent-soft);border-color:var(--accent)}
+.page-num{position:fixed;bottom:clamp(20px,3.4vh,36px);left:clamp(24px,3.4vw,48px);z-index:5;font-variant-numeric:tabular-nums}
+/* 键盘提示 */
+.kbd-hint{position:fixed;top:clamp(16px,2.6vh,28px);right:clamp(20px,3vw,40px);z-index:5}
+.kbd-hint span{font-size:12px;color:var(--ink-low);letter-spacing:.08em}
+
+/* 标签 */
+.pill{
+  display:inline-block;font-size:var(--fs-caption);font-weight:600;letter-spacing:.08em;
+  color:var(--accent);background:var(--accent-soft);
+  border:1px solid rgba(201,169,126,.25);
+  padding:6px 14px;border-radius:999px;margin:0 8px 8px 0;
+}
+
+/* 分隔 */
+.hr{width:100%;height:1px;background:var(--line);margin:clamp(24px,3.6vh,36px) 0;border:none}
+.sec-label{font-size:var(--fs-caption);color:var(--ink-low);letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.sec-label::before{content:"";width:28px;height:1px;background:var(--accent)}
+
+/* 表格（克制：少边框，用间距）*/
+.simple-table{width:100%;border-collapse:collapse;margin-top:18px}
+.simple-table th{font-size:var(--fs-caption);color:var(--ink-low);font-weight:600;text-align:left;padding:10px 14px;letter-spacing:.06em;border-bottom:1px solid var(--line)}
+.simple-table td{font-size:var(--fs-body);color:var(--ink-mid);padding:14px;border-bottom:1px solid var(--line)}
+.simple-table td:first-child,.simple-table th:first-child{padding-left:0}
+.simple-table tr:last-child td{border-bottom:none}
+.simple-table td b{color:var(--ink-hi);font-weight:600}
+
+@media (max-width:720px){
+  .nav-dots{display:none}
+  .deck{padding:0}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════ 1 封面 ══════════ -->
+  <section class="slide cover active">
+    <div class="slide-inner">
+      <div class="kicker reveal">
+        <span class="rule"></span>
+        <span class="caption" style="color:var(--accent)">川哥 AI + 内容获客营销</span>
+      </div>
+      <h1 class="display reveal" style="text-wrap:balance">用AI把擅长的事，<br>再做一次</h1>
+      <div class="quote reveal">
+        <p class="subtitle" style="color:var(--ink-mid);font-weight:400">全链路三大系统 —— 知识库 · 视觉 · 投流，一套打通</p>
+      </div>
+      <div class="meta reveal">
+        <span class="caption">26年品牌广告老兵 × AI智能体全链路</span>
+        <span class="caption weak">从策略到文案 · 从视觉到获客</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 2 我是川哥 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">Who I Am</div>
+      <h2 class="headline reveal" style="text-wrap:balance">不能提升营销效率的内容创意，<span class="accent">都是自嗨</span></h2>
+      <p class="body reveal" style="margin-top:22px;max-width:720px">我是川哥，多次创业者，<b style="color:var(--ink-hi)">26年品牌广告、内容营销、电商运营老兵</b>，具备甲乙方双向思维。从2025年开始，把LLM、Agent、Coze、无限画布、Claude Code、Obsidian逐个玩明白——<b style="color:var(--ink-hi)">从知识库搭建，到文案、视觉、视频的高质高效产出，再到投流获客全链路打通</b>。</p>
+      <div class="grid g3" style="margin-top:clamp(28px,4.5vh,48px)">
+        <div class="glass card reveal"><div class="num">01</div><h3>懂品牌</h3><p>26年甲乙方双向视角，策略到文案的完整判断力</p></div>
+        <div class="glass card reveal"><div class="num">02</div><h3>懂AI</h3><p>深度实操LLM / Agent / 画布 / 工作流，不止于会用</p></div>
+        <div class="glass card reveal"><div class="num">03</div><h3>懂变现</h3><p>内容生产 → 视觉转化 → 投流获客，全链路闭环</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 3 传统痛点 → 解法 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">The Problem</div>
+      <h2 class="headline reveal" style="text-wrap:balance">大模型懂通用知识，<br><span class="accent">不懂你的行业</span></h2>
+      <div class="grid g3 reveal" style="margin-top:clamp(24px,3.6vh,36px)">
+        <div class="glass card"><div class="num">✍️ 做文案</div><h3>只能写套话</h3></div>
+        <div class="glass card"><div class="num">📋 做策划</div><h3>只能堆模板</h3></div>
+        <div class="glass card"><div class="num">📊 做投放</div><h3>只能凭感觉</h3></div>
+      </div>
+      <div class="pipeline reveal">
+        <div class="pipe-step glass" style="border-radius:16px 0 0 16px"><div class="tag">LAYER 1</div><h4>26年行业沉淀</h4><p>品牌 · 广告 · 文案 · 视觉 · 运营</p></div>
+        <div class="pipe-step glass" style="border-radius:0"><div class="tag">LAYER 2</div><h4>Obsidian 知识库</h4><p>结构化 · 双向链接 · AI可检索</p></div>
+        <div class="pipe-step glass" style="border-radius:0"><div class="tag">LAYER 3</div><h4>AI 智能体</h4><p>Claude Code / Coze / WorkBuddy</p></div>
+        <div class="pipe-step glass" style="border-radius:0 16px 16px 0"><div class="tag">OUTPUT</div><h4>专业级输出</h4><p>系统性强 · 专业度深 · 原创度高</p></div>
+      </div>
+      <p class="caption reveal" style="margin-top:20px;color:var(--ink-mid)">不是把资料存在硬盘里吃灰 —— 而是让每一份经验，在AI调用时<span class="accent">"活过来"</span></p>
+    </div>
+  </section>
+
+  <!-- ══════════ 4 三大系统总览 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">The System</div>
+      <h2 class="headline reveal" style="text-wrap:balance">全链路三大系统</h2>
+      <div class="grid g3 reveal">
+        <div class="glass card" style="border-top:2px solid var(--accent)">
+          <div class="num">SYSTEM 01</div>
+          <h3>知识库+智能体</h3>
+          <p class="weak" style="font-size:var(--fs-caption);margin-bottom:6px">自生长系统 · 仅定制</p>
+          <p>你的"第二大脑"，策略到文案，一键生成</p>
+        </div>
+        <div class="glass card" style="border-top:2px solid var(--accent)">
+          <div class="num">SYSTEM 02</div>
+          <h3>AI无限画布</h3>
+          <p class="weak" style="font-size:var(--fs-caption);margin-bottom:6px">电商视觉系统 · 标准品</p>
+          <p>零门槛，电商图/海报/视频一键生成</p>
+        </div>
+        <div class="glass card" style="border-top:2px solid var(--accent)">
+          <div class="num">SYSTEM 03</div>
+          <h3>投流推广获客</h3>
+          <p class="weak" style="font-size:var(--fs-caption);margin-bottom:6px">获客系统 · 仅定制</p>
+          <p>让好内容，找到对的人</p>
+        </div>
+      </div>
+      <hr class="hr reveal">
+      <div class="grid g3 reveal">
+        <div class="card"><div class="bignum">26<span class="unit">年</span></div><p class="caption" style="margin-top:8px">行业沉淀注入AI</p></div>
+        <div class="card"><div class="bignum">6<span class="unit">大</span></div><p class="caption" style="margin-top:8px">投流平台覆盖</p></div>
+        <div class="card"><div class="bignum">7×14<span class="unit">h</span></div><p class="caption" style="margin-top:8px">陪跑学习陪伴</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 5 系统一 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">SYSTEM 01 · 定制</div>
+      <h2 class="headline reveal" style="text-wrap:balance">知识库 + 智能体 · <span class="accent">自生长系统</span></h2>
+      <p class="subtitle reveal" style="color:var(--ink-mid);font-weight:400;margin-top:10px">知识驱动型智能体系统 —— 让AI站在26年行业经验的肩膀上输出</p>
+      <div class="grid g2 reveal" style="margin-top:clamp(26px,4vh,40px)">
+        <div class="glass card">
+          <div class="num">VALUE</div>
+          <h3>五大不可替代价值</h3>
+          <ul>
+            <li><b style="color:var(--accent)">品牌一致性 ×100</b> — 不管谁用哪个AI，产出都"像这个品牌"</li>
+            <li><b style="color:var(--accent)">知识复利效应</b> — 越用越聪明，增长呈指数级</li>
+            <li><b style="color:var(--accent)">人×AI能力乘法</b> — 一个人干一个团队的活</li>
+            <li><b style="color:var(--accent)">知识不随人员流失</b> — 人走了，方法论和AI还在</li>
+            <li><b style="color:var(--accent)">工具无关</b> — Markdown永久属于你，不绑定任何平台</li>
+          </ul>
+        </div>
+        <div class="glass card">
+          <div class="num">ARCHITECTURE</div>
+          <h3>三层架构</h3>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+            <div class="pipe-step" style="background:var(--accent-soft);border-radius:12px;padding:14px 18px"><div class="tag">第一层 · 知识层</div><p style="color:var(--ink-mid);font-size:var(--fs-body)">Obsidian 结构化知识库 — 双向链接 + 标签 + 全文搜索</p></div>
+            <div class="pipe-step" style="background:var(--glass);border-radius:12px;padding:14px 18px;border:1px solid var(--glass-border)"><div class="tag">第二层 · 智能体层</div><p style="color:var(--ink-mid);font-size:var(--fs-body)">Claude Code / Coze / WorkBuddy — 各取所长 · 批量产出</p></div>
+            <div class="pipe-step" style="background:var(--glass);border-radius:12px;padding:14px 18px;border:1px solid var(--glass-border)"><div class="tag">第三层 · 执行层</div><p style="color:var(--ink-mid);font-size:var(--fs-body)">商业输出 — 系统性强 · 专业度深 · 原创度高</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 6 系统二 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">SYSTEM 02 · 标准品</div>
+      <h2 class="headline reveal" style="text-wrap:balance">AI无限画布 · <span class="accent">电商视觉系统</span></h2>
+      <p class="subtitle reveal" style="color:var(--ink-mid);font-weight:400;margin-top:10px">零门槛 · 全行业通用 · 电商图/海报/视频一键生成</p>
+      <div class="grid g4 reveal">
+        <div class="glass card"><div class="num">01</div><h3>全套模板</h3><p>上传一张产品图 → 头图/详情页/口播/混剪/海报全套输出，每周上新5+模板</p></div>
+        <div class="glass card"><div class="num">02</div><h3>无限画布</h3><p>品牌VI、IP形象、朋友圈/公众号配图、品宣视频，批量生成</p></div>
+        <div class="glass card"><div class="num">03</div><h3>全球大模型</h3><p>GPT-image 2.0 · NANO Banana · Seedream 5.0 出图 · Seedance 2.0 视频</p></div>
+        <div class="glass card"><div class="num">04</div><h3>7×14陪跑</h3><p>全年社群 + 实战答疑 + 系统课程 + 官方资源 + 不定期直播</p></div>
+      </div>
+      <div class="reveal" style="margin-top:clamp(24px,3.6vh,36px)">
+        <span class="pill">电商商家</span><span class="pill">自媒体从业者</span><span class="pill">同城实体商家</span><span class="pill">OPC一人公司</span><span class="pill">微型公司</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 7 系统三 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">SYSTEM 03 · 定制</div>
+      <h2 class="headline reveal" style="text-wrap:balance">投流推广 · <span class="accent">获客系统</span></h2>
+      <p class="subtitle reveal" style="color:var(--ink-mid);font-weight:400;margin-top:10px">AI+多平台投流引擎 · 精准获客放大器</p>
+      <div class="grid g2 reveal" style="margin-top:clamp(24px,3.6vh,36px)">
+        <div class="glass card">
+          <div class="num">COVERAGE</div>
+          <h3>六大平台覆盖</h3>
+          <p>抖音巨量本地推 / 千川 · 腾讯广点通 · 百度竞价 · 快手磁力金牛 · 小红书聚光</p>
+        </div>
+        <div class="glass card">
+          <div class="num">CAPABILITY</div>
+          <h3>四大优势</h3>
+          <ul>
+            <li><b style="color:var(--accent)">AI联动裂变</b> — 电商图/视频自动裂变为多尺寸多文案投放组合</li>
+            <li><b style="color:var(--accent)">精准人群匹配</b> — AI内容标签+用户画像，降低获客成本</li>
+            <li><b style="color:var(--accent)">多场景适配</b> — 新品打爆 / 节日大促 / 同城到店 / 私域引流 / 招商加盟 / 跨境测款</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote reveal" style="margin-top:clamp(24px,3.6vh,36px)">
+        <p class="subtitle" style="color:var(--ink-hi);font-weight:400">让流量<span class="accent">进得来</span>、<span class="accent">留得住</span>、<span class="accent">转得动</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 8 合作模式 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">How To Start</div>
+      <h2 class="headline reveal" style="text-wrap:balance">三种合作模式</h2>
+      <div class="grid g3 reveal">
+        <div class="glass card" style="display:flex;flex-direction:column">
+          <div class="num">MODE 01</div>
+          <h3>免费注册体验</h3>
+          <div style="margin:12px 0"><span class="bignum">0<span class="unit">元</span></span></div>
+          <p>零门槛注册即用 · 充值消费按需 · 全套AI创作功能开放</p>
+        </div>
+        <div class="glass card" style="display:flex;flex-direction:column;border-top:2px solid var(--accent)">
+          <div class="num">MODE 02 · 推荐</div>
+          <h3>陪跑社群</h3>
+          <div style="margin:12px 0"><span class="bignum">288<span class="unit">元/年</span></span></div>
+          <p>全年7×14小时在线答疑 · 系统课程 · VIP模板全开放 · 不定期直播</p>
+        </div>
+        <div class="glass card" style="display:flex;flex-direction:column">
+          <div class="num">MODE 03</div>
+          <h3>运营合伙人</h3>
+          <div style="margin:12px 0"><span class="bignum">1999<span class="unit">元/年</span></span></div>
+          <p>含288全部权益 · 网站贴牌 · 推广收益分成 · 充值15%优惠 · 渠道拓展收益</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 9 定制服务 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="sec-label reveal">Custom Service</div>
+      <h2 class="headline reveal" style="text-wrap:balance">一站式 AI 内容营销定制服务</h2>
+      <p class="subtitle reveal" style="color:var(--ink-mid);font-weight:400;margin-top:10px">从知识体系到视觉产出到获客转化，全链路交付</p>
+      <table class="simple-table reveal" style="margin-top:clamp(24px,3.6vh,36px)">
+        <thead><tr><th style="width:26%">服务</th><th>内容</th><th style="width:30%">交付物</th></tr></thead>
+        <tbody>
+          <tr><td><b>系统一 · 知识库+智能体</b></td><td>Obsidian知识库 + Claude Code / Coze / WorkBuddy</td><td>策划案 · 品牌文案 · 营销方案</td></tr>
+          <tr><td><b>系统二 · 电商视觉</b></td><td>AI无限画布 + 多模型生图/生视频</td><td>电商图 · 海报 · 视频全流程</td></tr>
+          <tr><td><b>系统三 · 获客</b></td><td>矩阵分发 + 私域SOP + 投放优化 + 数据看板</td><td>流量进得来 · 留得住 · 转得动</td></tr>
+        </tbody>
+      </table>
+      <div class="grid g2 reveal" style="margin-top:clamp(22px,3.2vh,32px)">
+        <div class="glass card"><div class="num">MONTHLY</div><h3>按月</h3><div style="margin:8px 0"><span class="bignum">1.5万<span class="unit">元/月起</span></span></div><p class="weak">其它新增需求面议</p></div>
+        <div class="glass card"><div class="num">DAILY</div><h3>按天</h3><div style="margin:8px 0"><span class="bignum">500<span class="unit">元/天起</span></span></div><p class="weak">不低于3天 · 其它面议</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 10 结束 ══════════ -->
+  <section class="slide">
+    <div class="slide-inner" style="text-align:center">
+      <div class="kicker reveal" style="justify-content:center;margin-bottom:clamp(24px,4vh,40px)">
+        <span class="rule"></span><span class="caption" style="color:var(--accent)">THANKS</span><span class="rule"></span>
+      </div>
+      <h2 class="display reveal" style="text-wrap:balance">让好内容，<br><span class="accent">找到对的人</span></h2>
+      <p class="subtitle reveal" style="color:var(--ink-mid);font-weight:400;margin-top:clamp(20px,3vh,32px)">川哥 · AI + 内容获客营销全链路</p>
+      <p class="body reveal" style="margin-top:clamp(28px,4vh,44px);max-width:520px;margin-left:auto;margin-right:auto">欢迎新老朋友来咨询。<br>知识库 · 视觉 · 投流 —— 用AI把擅长的事，再做一次。</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- 导航 -->
+<div class="nav-dots" id="dots"></div>
+<button class="nav-arrow" id="next" aria-label="下一页">→</button>
+<div class="page-num caption" id="pagenum">01 / 10</div>
+<div class="kbd-hint"><span>← → 翻页</span></div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const dotsEl=document.getElementById('dots');
+let cur=0;
+
+// 生成圆点
+slides.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','第'+(i+1)+'页');b.onclick=()=>go(i);dotsEl.appendChild(b)});
+const dots=[...dotsEl.children];
+
+function go(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,idx)=>s.classList.toggle('active',idx===cur));
+  dots.forEach((d,idx)=>d.classList.toggle('on',idx===cur));
+  document.getElementById('pagenum').textContent=String(cur+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+}
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(cur+1)}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1)}
+  if(e.key==='Home'){go(0)} if(e.key==='End'){go(slides.length-1)}
+});
+go(0);
+</script>
+</body>
+</html>
